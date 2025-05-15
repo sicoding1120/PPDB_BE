@@ -45,10 +45,16 @@ enum OrphanStatus {
   YATIMPIATU
 }
 
-
 enum ParentStatus {
   ALIVE
   DEAD
+}
+
+enum BloodType {
+  A
+  B
+  AB
+  O
 }
 
 model Student {
@@ -68,30 +74,72 @@ model Student {
   status       AcademyStatus @default(ACTIVE)
   createdAt    DateTime      @default(now())
   orphanStatus OrphanStatus  @default(NONE)
+  child_number Int?
+  Brothers     Int?
+  from_school  String        @default("")
+  citizenship  String?
+  blood_type   BloodType?
 
-  parent   Parent? @relation(fields: [parentID], references: [ID])
-  parentID String?
+  // relation 
+  father Father? @relation("studentFather")
+  mother Mother? @relation("studentMother")
 }
 
+model Father {
+  ID           String        @id @default(uuid())
+  name         String
+  job          String?
+  phone        String?
+  address      String?
+  religion     Religion?
+  placeOfBirth String
+  dateOfBirth  DateTime
+  status       ParentStatus?
+  education    String
+  title        String
+  citizenship  String?
 
-model Parent {
-  ID            String        @id @default(uuid())
-  father_name   String?
-  mother_name   String?
-  father_job    String?
-  mother_job    String?
-  phone         String?
-  address       String?
-  father_status ParentStatus?
-  mother_status ParentStatus?
+  // relation
+  student   Student @relation("studentFather", fields: [studentID], references: [ID])
+  studentID String  @unique
+}
 
-  student Student[]
+model Mother {
+  ID           String        @id @default(uuid())
+  name         String
+  job          String?
+  phone        String?
+  address      String?
+  religion     Religion?
+  placeOfBirth String
+  dateOfBirth  DateTime
+  status       ParentStatus?
+  education    String
+  title        String
+  citizenship  String?
+
+  // relation
+  student   Student @relation("studentMother", fields: [studentID], references: [ID])
+  studentID String  @unique
 }
 
 model Payments {
-  ID  String @id @default(uuid())
-  paymentDate DateTime @default(now())
-  amountPaid      Float
-  paymentMethod   String
+  ID            String   @id @default(uuid())
+  paymentDate   DateTime @default(now())
+  amountPaid    Float
+  paymentMethod String
 }
 
+// model Parent {
+//   ID            String        @id @default(uuid())
+//   father_name   String?
+//   mother_name   String?
+//   father_job    String?
+//   mother_job    String?
+//   phone         String?
+//   address       String?
+//   father_status ParentStatus?
+//   mother_status ParentStatus?
+
+//   student Student[]
+// }

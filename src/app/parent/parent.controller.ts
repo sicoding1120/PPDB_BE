@@ -5,10 +5,10 @@ import { ParentService } from './parent.service';
 export class ParentController {
   constructor(private ps: ParentService) {}
 
-  @Get('/')
-  async getAllParent() {
-    return await this.ps.getAllParents();
-  }
+//   @Get('/')
+//   async getAllParent() {
+//     return await this.ps.getAllParents();
+//   }
 
   @Post('/create')
   async createParent(payload: any) {
