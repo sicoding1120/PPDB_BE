@@ -6,10 +6,33 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+enum Gender {
+  LK
+  PR
+}
+
+enum Major {
+  TKJ
+  RPL
+}
+
+model student {
+  ID           String    @id @default(uuid())
+  NISN         String
+  fullName     String
+  placeOfBirth String
+  dateOfBirth  DateTime
+  gender       Gender
+  address      String
+  phone        String
+  email        String    @unique
+  major        Major
+  dateIn       DateTime? @default(now())
 }
