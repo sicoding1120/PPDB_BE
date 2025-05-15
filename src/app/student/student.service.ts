@@ -13,4 +13,55 @@ export class StudentService {
       data: students,
     };
   }
+
+  async createStudent(payload: Student) {
+   
+    try {
+      const student = await this.P.student.findUnique({
+        where: {
+          NISN: payload.NISN,
+          NIK: payload.NIK,
+        },
+      });
+
+      if (student) {
+        throw new HttpException('Student already exists', 400);
+      }
+
+      payload.dateOfBirth = new Date(payload.dateOfBirth).toISOString();
+
+      await this.P.student.create({
+        data: {
+          NISN: payload.NISN,
+          NIK: payload.NIK,
+          fullName: payload.fullName,
+          placeOfBirth: payload.placeOfBirth,
+          dateOfBirth: payload.dateOfBirth,
+          gender: payload.gender,
+          address: payload.address,
+          phone: payload.phone,
+          major: payload.major,
+          status: payload.status,
+          orphanStatus: payload.orphanStatus,
+         
+          
+        },
+      } as never);
+
+      return {
+        message: 'success',
+        status: 201,
+        data: payload,
+      };
+    } catch (e) {
+      if (e) {
+        console.log(e);
+        return {
+          message: "terjadi kesalahan",
+          status: 500,
+          error: e
+        }
+      }
+    }
+  }
 }

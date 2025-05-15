@@ -13,6 +13,7 @@ datasource db {
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
 }
+
 enum Gender {
   LK
   PR
@@ -23,16 +24,74 @@ enum Major {
   RPL
 }
 
-model student {
-  ID           String    @id @default(uuid())
-  NISN         String
+enum Religion {
+  ISLAM
+  CHRISTIAN
+  CATHOLIC
+  HINDU
+  BUDDHIST
+  CONFUCIAN
+}
+
+enum AcademyStatus {
+  ACTIVE
+  NONACTIVE
+}
+
+enum OrphanStatus {
+  NONE
+  YATIM
+  PIATU
+  YATIMPIATU
+}
+
+
+enum ParentStatus {
+  ALIVE
+  DEAD
+}
+
+model Student {
+  ID           String        @id @default(uuid())
+  NISN         String        @unique
+  NIK          String        @unique
   fullName     String
   placeOfBirth String
   dateOfBirth  DateTime
   gender       Gender
   address      String
   phone        String
-  email        String    @unique
   major        Major
-  dateIn       DateTime? @default(now())
+  dateIn       DateTime?     @default(now())
+  picture_url  String?
+  religion     Religion?
+  status       AcademyStatus @default(ACTIVE)
+  createdAt    DateTime      @default(now())
+  orphanStatus OrphanStatus  @default(NONE)
+
+  parent   Parent? @relation(fields: [parentID], references: [ID])
+  parentID String?
 }
+
+
+model Parent {
+  ID            String        @id @default(uuid())
+  father_name   String?
+  mother_name   String?
+  father_job    String?
+  mother_job    String?
+  phone         String?
+  address       String?
+  father_status ParentStatus?
+  mother_status ParentStatus?
+
+  student Student[]
+}
+
+model Payments {
+  ID  String @id @default(uuid())
+  paymentDate DateTime @default(now())
+  amountPaid      Float
+  paymentMethod   String
+}
+
