@@ -227,7 +227,7 @@ enum StatusNotification {
   PENDING
   VERIFIED
   UNVERIFIED
-  INFORMATION
+  INFORMATION 
 }
 
 model Notification {

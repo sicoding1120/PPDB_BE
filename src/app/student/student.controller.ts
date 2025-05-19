@@ -33,6 +33,7 @@ export class StudentController {
   async getStudentById(@Param('id') id: string) {
     return await this.ss.getStudentById(id);
   }
+
   @Delete('/delete/:id')
   async deleteStudent(@Param('id') id: string) {
     return await this.ss.deleteStudentById(id);
