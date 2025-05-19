@@ -66,12 +66,15 @@ model User {
   ID           String    @id @default(uuid())
   username     String
   email        String    @unique
+  phone        String?
   password     String
   profile_url  String?
   role         Role      @default(USER)
   refreshToken String?
   Student      Student[]
 }
+
+
 
 model Student {
   ID           String        @id @default(uuid())

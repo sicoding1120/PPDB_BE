@@ -8,7 +8,7 @@ export class StudentService {
   constructor(private P: PrismaService) {}
 
   async getAllStudents() {
-    const students = await this.P.student.findMany({});
+    const students = await this.P.student.findMany();
     return {
       message: 'success',
       status: 200,

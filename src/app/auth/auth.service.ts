@@ -10,5 +10,12 @@ export class AuthService {
 
     }
 
-  
+    async Login(payload: any) {
+        const user = await this.p.user.findUnique({
+            where: {
+                email: payload.email,
+                phone: payload.phone
+            }
+        })
+   }
 }
