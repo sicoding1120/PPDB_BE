@@ -1,5 +1,6 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { $Enums } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 import { jwt_config } from 'src/config/jwt.config';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -48,12 +49,20 @@ export class AuthService {
   }
 
   async Login(payload: any) {
-    const user = await this.p.user.findUnique({
-      where: {
-        email: payload.email,
-        phone: payload.phone,
-      },
-    });
+    let user: any;
+    if (payload.email !== undefined && payload.phone == undefined) {
+      user = await this.p.user.findUnique({
+        where: {
+          email: payload.email,
+        },
+      });
+    } else if (payload.email == undefined && payload.phone !== undefined) {
+      user = await this.p.user.findUnique({
+        where: {
+          phone: payload.phone,
+        },
+      } as any);
+    }
 
     if (!user) {
       throw new HttpException("user doesn't exist", 422);
@@ -67,17 +76,25 @@ export class AuthService {
         role: user.role,
         email: user.email,
         phone: user.phone,
-        };
-        const access_token = await this.generateJWT(
-          jwtPayload,
-          '1d',
-          jwt_config.access_token_secret,
-        );
-        const refresh_token = await this.generateJWT(
-          jwtPayload,
-          '7d',
-          jwt_config.refresh_token_secret,
-        );
+      };
+      const access_token = await this.generateJWT(
+        jwtPayload,
+        '1d',
+        jwt_config.access_token_secret,
+      );
+      const refresh_token = await this.generateJWT(
+        jwtPayload,
+        '7d',
+        jwt_config.refresh_token_secret,
+      );
+      await this.p.user.update({
+        where: {
+          ID: user.ID,
+        },
+        data: {
+          refreshToken: refresh_token,
+        },
+      });
       return {
         message: 'success login',
         status: 200,
@@ -93,5 +110,14 @@ export class AuthService {
     } else {
       throw new HttpException("email and password doesn't match", 422);
     }
+  }
+
+  async getAllUser() {
+    const users = await this.p.user.findMany();
+    return {
+      message: 'success get all user',
+      status: 200,
+      data: users,
+    };
   }
 }
