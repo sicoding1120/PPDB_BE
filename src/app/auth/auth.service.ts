@@ -50,13 +50,13 @@ export class AuthService {
 
   async Login(payload: any) {
     let user: any;
-    if (payload.email !== undefined && payload.phone == undefined) {
+    if (payload.email !== "" && payload.phone == "") {
       user = await this.p.user.findUnique({
         where: {
           email: payload.email,
         },
       });
-    } else if (payload.email == undefined && payload.phone !== undefined) {
+    } else if (payload.email == "" && payload.phone !== "") {
       user = await this.p.user.findUnique({
         where: {
           phone: payload.phone,
