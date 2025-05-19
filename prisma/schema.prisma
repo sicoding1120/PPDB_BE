@@ -57,6 +57,22 @@ enum BloodType {
   O
 }
 
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  ID           String    @id @default(uuid())
+  username     String
+  email        String    @unique
+  password     String
+  profile_url  String?
+  role         Role      @default(USER)
+  refreshToken String?
+  Student      Student[]
+}
+
 model Student {
   ID           String        @id @default(uuid())
   NISN         String        @unique
@@ -79,10 +95,25 @@ model Student {
   from_school  String        @default("")
   citizenship  String?
   blood_type   BloodType?
+  age          Int
 
   // relation 
-  father Father? @relation("studentFather")
-  mother Mother? @relation("studentMother")
+  announcement Announcement?
+
+  result       Result?
+  registration RegistrationTransaction[]
+  notification Notification[]
+  document     Document?                 @relation(fields: [documentID], references: [ID])
+  documentID   String?                   @unique
+  user         User?                     @relation(fields: [userID], references: [ID])
+  userID       String?
+
+  //  relation
+  mother   Mother? @relation(fields: [motherID], references: [ID])
+  motherID String?
+
+  father   Father? @relation(fields: [fatherID], references: [ID])
+  fatherID String?
 }
 
 model Father {
@@ -100,8 +131,8 @@ model Father {
   citizenship  String?
 
   // relation
-  student   Student @relation("studentFather", fields: [studentID], references: [ID])
-  studentID String  @unique
+
+  student Student[]
 }
 
 model Mother {
@@ -118,16 +149,59 @@ model Mother {
   title        String
   citizenship  String?
 
+  student Student[]
+}
+
+enum RegistrationStatus {
+  PENDING
+  VERIFIED
+  REJECTED
+}
+
+model RegistrationTransaction {
+  ID               String             @id @default(uuid())
+  registrationDate DateTime           @default(now())
+  amountPaid       Float
+  paymentMethod    String
+  status           RegistrationStatus @default(PENDING)
+  notes            String?
+
+  // relation ke Student
+  student   Student @relation(fields: [studentID], references: [ID])
+  studentID String
+}
+
+model Result {
+  ID        String   @id @default(uuid())
+  math      Int?
+  english   Int?
+  islamic   Int?
+  logic     Int?
+  average   Float?
+  isPassed  Boolean  @default(false)
+  createdAt DateTime @default(now())
+
   // relation
-  student   Student @relation("studentMother", fields: [studentID], references: [ID])
+  student   Student @relation(fields: [studentID], references: [ID])
   studentID String  @unique
 }
 
-model Payments {
-  ID            String   @id @default(uuid())
-  paymentDate   DateTime @default(now())
-  amountPaid    Float
-  paymentMethod String
+enum GraduationStatus {
+  PASSED
+  FAILED
+  PENDING
+}
+
+model Announcement {
+  ID               String           @id @default(uuid())
+  title            String
+  message          String
+  status           GraduationStatus @default(PENDING)
+  announcementDate DateTime         @default(now())
+
+  // relasi ke Student
+  student   Student @relation(fields: [studentID], references: [ID])
+  studentID String  @unique
 }
 
 // model Parent {
@@ -143,3 +217,50 @@ model Payments {
 
 //   student Student[]
 // }
+
+enum StatusNotification {
+  REJECTED
+  ACCEPTED
+  PENDING
+  VERIFIED
+  UNVERIFIED
+  INFORMATION
+}
+
+model Notification {
+  ID        String             @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime           @default(now())
+  is_read   Boolean            @default(false)
+  status    StatusNotification
+
+  // relation
+  student   Student @relation(fields: [studentID], references: [ID])
+  studentID String
+}
+
+model Document {
+  ID                 String   @id @default(uuid())
+  fatherKTP_url      String?
+  motherKTP_url      String?
+  familyCard_url     String?
+  Akte_url           String?
+  Ijazah_url         String?
+  studentPicture_url String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // relation 
+  student Student?
+}
+
+model clientSurvey {
+  ID        String   @id @default(uuid())
+  name      String?
+  Major     Major
+  message   String?
+  photoUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

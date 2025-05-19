@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateFatherDto } from './father.dto';
+import { CreateMotherDto } from './mother.dto';
 
 @Injectable()
 export class ParentService {
@@ -32,18 +34,22 @@ export class ParentService {
     };
   }
 
-  async getParent(payload:any) {
-    const mother = await this.p.mother.findUnique({
+  async getParent(payload: ParentDTO) {
+    const parent = await this.p.student.findUnique({
       where: {
-        studentID: payload.studentID,
+        ID: payload.studentID,
+      },
+      select: {
+        mother: true,
+        father: true
       }
-    })
+    });
 
-    const father = await this.p.father.findUnique({
-      where: {
-        studentID: payload.studentID,
-      }
-    })
+    return {
+      message: "success",
+      status: 200,
+      data: parent
+    }
   }
 
   async createParent(payload: any) {
@@ -65,8 +71,11 @@ export class ParentService {
     }
   }
 
-  async createFather(payload: any) {
+  async createFather(payload: CreateFatherDto) {
     try {
+      await this.p.father.create({
+        data: payload,
+      } as never);
       return {
         message: 'success',
         status: 201,
@@ -84,8 +93,11 @@ export class ParentService {
     }
   }
 
-  async createMother(payload: any) {
+  async createMother(payload: CreateMotherDto) {
     try {
+      await this.p.mother.create({
+        data: payload,
+      });
       return {
         message: 'success',
         status: 201,

@@ -1,0 +1,3 @@
+interface ParentDTO {
+    studentID: string;
+}

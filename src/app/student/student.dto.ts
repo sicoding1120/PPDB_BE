@@ -1,3 +1,5 @@
+import { BloodType } from '@prisma/client';
+
 enum Gender {
   LK = 'LK',
   PR = 'PR',
@@ -34,8 +36,14 @@ enum ParentStatus {
   DEAD = 'DEAD',
 }
 
-interface Student {
-  id?: string;
+enum Blood_type {
+  A,
+  B,
+  AB,
+  O,
+}
+
+export class CreateStudentDto {
   NISN: string;
   NIK: string;
   fullName: string;
@@ -46,10 +54,15 @@ interface Student {
   phone: string;
   major: Major;
   dateIn?: Date;
-  picture_url?: string | null;
-  religion?: Religion | null;
-  status: AcademyStatus;
-  createdAt?: Date;
-  orphanStatus: OrphanStatus;
-  parentID?: string | null;
+  picture_url?: string;
+  religion?: Religion;
+  status?: AcademyStatus; // Sesuaikan enum `AcademyStatus`
+  orphanStatus?: OrphanStatus;
+  child_number?: number;
+  Brothers?: number;
+  from_school?: string;
+  citizenship?: string;
+  blood_type?: BloodType;
+  motherID?: string;
+  fatherID?: string;
 }

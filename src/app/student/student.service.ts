@@ -1,12 +1,14 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CreateStudentDto } from './student.dto';
+import { format, subDays } from 'date-fns';
 
 @Injectable()
 export class StudentService {
   constructor(private P: PrismaService) {}
 
   async getAllStudents() {
-    const students = await this.P.student.findMany();
+    const students = await this.P.student.findMany({});
     return {
       message: 'success',
       status: 200,
@@ -14,8 +16,78 @@ export class StudentService {
     };
   }
 
-  async createStudent(payload: Student) {
-   
+  async getStudentById(id: string) {
+    const student = await this.P.student.findUnique({
+      where: {
+        ID: id,
+      },
+      include: {
+        father: {
+          select: {
+            name: true,
+          },
+        },
+        mother: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    if (!student) {
+      throw new HttpException('Student not found', 404);
+    }
+    return {
+      message: 'success',
+      status: 200,
+      data: student,
+    };
+  }
+
+  async studentOverview() {
+    const today = new Date();
+    const last5Days = subDays(today, 4);
+    const studentDateIn = await this.P.student.findMany({
+      where: {
+        createdAt: {
+          gte: new Date(format(last5Days, 'yyy-MM-dd')),
+        },
+      },
+    });
+    const counts: Record<string, number> = {};
+
+    for (const s of studentDateIn) {
+      const dateKey = format(s.createdAt, 'yyyy-MM-dd');
+      counts[dateKey] = (counts[dateKey] || 0) + 1;
+    }
+
+    // Pastikan urutan tanggal tetap (termasuk hari yang tidak ada data)
+    const history: { tgl: string; jml_siswa: number }[] = [];
+    for (let i = 4; i >= 0; i--) {
+      const date = subDays(today, i);
+      const dateStr = format(date, 'yyyy-MM-dd');
+      history.push({
+        tgl: dateStr,
+        jml_siswa: counts[dateStr] || 0,
+      });
+    }
+    const studentCount = await this.P.student.count();
+
+    return {
+      message: 'success',
+      status: 200,
+      data: {
+        studentCount: studentCount,
+        studentSuccess: 0,
+        studentFailed: 0,
+        studentOut: 0,
+        history: history,
+      },
+    };
+  }
+
+  async createStudent(payload: CreateStudentDto) {
     try {
       const student = await this.P.student.findUnique({
         where: {
@@ -32,19 +104,7 @@ export class StudentService {
 
       await this.P.student.create({
         data: {
-          NISN: payload.NISN,
-          NIK: payload.NIK,
-          fullName: payload.fullName,
-          placeOfBirth: payload.placeOfBirth,
-          dateOfBirth: payload.dateOfBirth,
-          gender: payload.gender,
-          address: payload.address,
-          phone: payload.phone,
-          major: payload.major,
-          status: payload.status,
-          orphanStatus: payload.orphanStatus,
-         
-          
+          ...payload,
         },
       } as never);
 
@@ -57,11 +117,103 @@ export class StudentService {
       if (e) {
         console.log(e);
         return {
-          message: "terjadi kesalahan",
+          message: 'terjadi kesalahan',
           status: 500,
-          error: e
-        }
+          error: e,
+        };
       }
     }
+  }
+
+  async getParents() {
+    const parents = await this.P.student.findMany({
+      select: {
+        father: {
+          select: {
+            name: true,
+            job: true,
+          },
+        },
+        mother: {
+          select: {
+            name: true,
+            job: true,
+          },
+        },
+        fullName: true,
+        from_school: true,
+        ID: true,
+      },
+    });
+
+    return {
+      message: 'success',
+      status: 200,
+      data: parents,
+    };
+  }
+
+  async getParentByStudentId(id: string) {
+    const parent = await this.P.student.findUnique({
+      where: {
+        ID: id,
+      },
+      select: {
+        father: {
+          select: {
+            name: true,
+            job: true,
+            ID: true,
+            phone: true,
+            address: true,
+            status: true,
+            citizenship: true,
+          },
+        },
+        mother: {
+          select: {
+            name: true,
+            job: true,
+            ID: true,
+            phone: true,
+            address: true,
+            status: true,
+            citizenship: true,
+          },
+        },
+        fullName: true,
+        from_school: true,
+        ID: true,
+      },
+    });
+    return {
+      message: 'success',
+      status: 200,
+      data: parent,
+    };
+  }
+
+  async deleteStudentById(id: string) {
+    const student = await this.P.student.findUnique({
+      where: {
+        ID: id,
+      },
+    });
+
+    if (!student) {
+      throw new HttpException('Student not found', 404);
+    }
+
+    await this.P.student.delete({
+      where: {
+        ID: id,
+      },
+    });
+
+    return {
+      message: 'success',
+      status: 200,
+      data: student,
+    };
   }
 }
