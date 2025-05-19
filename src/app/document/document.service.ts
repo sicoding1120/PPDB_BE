@@ -6,11 +6,8 @@ export class DocumentService {
   constructor(private p: PrismaService) {}
 
   async savefile(payload: any) {
-    const { file, userId } = payload;
-    const { originalname, buffer } = file;
-
     // Save the file to the database
-    const document = await this.p.document.create({
+    await this.p.document.create({
       data: {
         Akte_url: payload.akte_url,
         familyCard_url: payload.familyCard_url,
