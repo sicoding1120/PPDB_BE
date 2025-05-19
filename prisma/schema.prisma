@@ -205,6 +205,99 @@ enum Role {
   ADMIN
 }
 
+model User {
+  ID           String    @id @default(uuid())
+  username     String
+  email        String    @unique
+  phone        String?
+  password     String
+  profile_url  String?
+  role         Role      @default(USER)
+  refreshToken String?
+  Student      Student[]
+}
+
+
+
+model Student {
+  ID           String        @id @default(uuid())
+  NISN         String        @unique
+  NIK          String        @unique
+  fullName     String
+  placeOfBirth String
+  dateOfBirth  DateTime
+  gender       Gender
+  address      String
+  phone        String
+  major        Major
+  dateIn       DateTime?     @default(now())
+  picture_url  String?
+  religion     Religion?
+  status       AcademyStatus @default(ACTIVE)
+  createdAt    DateTime      @default(now())
+  orphanStatus OrphanStatus  @default(NONE)
+  child_number Int?
+  Brothers     Int?
+  from_school  String        @default("")
+  citizenship  String?
+  blood_type   BloodType?
+  age          Int
+
+  // relation 
+  announcement Announcement?
+
+  result       Result?
+  registration RegistrationTransaction[]
+  notification Notification[]
+  document     Document?                 @relation(fields: [documentID], references: [ID])
+  documentID   String?                   @unique
+  user         User?                     @relation(fields: [userID], references: [ID])
+  userID       String?
+
+  //  relation
+  mother   Mother? @relation(fields: [motherID], references: [ID])
+  motherID String?
+
+  father   Father? @relation(fields: [fatherID], references: [ID])
+  fatherID String?
+}
+
+model Father {
+  ID           String        @id @default(uuid())
+  name         String
+  job          String?
+  phone        String?
+  address      String?
+  religion     Religion?
+  placeOfBirth String
+  dateOfBirth  DateTime
+  status       ParentStatus?
+  education    String
+  title        String
+  citizenship  String?
+
+  // relation
+
+  student Student[]
+}
+
+model Mother {
+  ID           String        @id @default(uuid())
+  name         String
+  job          String?
+  phone        String?
+  address      String?
+  religion     Religion?
+  placeOfBirth String
+  dateOfBirth  DateTime
+  status       ParentStatus?
+  education    String
+  title        String
+  citizenship  String?
+
+  student Student[]
+}
+
 enum RegistrationStatus {
   PENDING
   VERIFIED
@@ -223,5 +316,5 @@ enum StatusNotification {
   PENDING
   VERIFIED
   UNVERIFIED
-  INFORMATION
+  INFORMATION 
 }

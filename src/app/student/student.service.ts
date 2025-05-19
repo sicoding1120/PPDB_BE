@@ -22,16 +22,9 @@ export class StudentService {
         ID: id,
       },
       include: {
-        father: {
-          select: {
-            name: true,
-          },
-        },
-        mother: {
-          select: {
-            name: true,
-          },
-        },
+        father: true,
+        mother: true,
+        document: true
       },
     });
 
