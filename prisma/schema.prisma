@@ -66,7 +66,7 @@ model User {
   ID           String    @id @default(uuid())
   username     String
   email        String    @unique
-  phone        String?   @unique
+  phone        String   @unique
   password     String
   profile_url  String?
   role         Role      @default(USER)

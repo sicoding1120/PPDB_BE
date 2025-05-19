@@ -61,7 +61,7 @@ export class AuthService {
         where: {
           phone: payload.phone,
         },
-      } as any);
+      } );
     }
 
     if (!user) {
