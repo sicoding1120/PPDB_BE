@@ -51,17 +51,17 @@ export class AuthService {
   async Login(payload: any) {
     let user: any;
     if (payload.email !== "" && payload.phone == "") {
-      user = await this.p.user.findUnique({
+      user = await this.p.user.findFirst({
         where: {
           email: payload.email,
         },
       });
     } else if (payload.email == "" && payload.phone !== "") {
-      user = await this.p.user.findUnique({
+      user = await this.p.user.findFirst({
         where: {
           phone: payload.phone,
         },
-      } );
+      });
     }
 
     if (!user) {
