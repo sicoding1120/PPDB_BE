@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,6 +6,155 @@ datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL")
   directUrl = env("DIRECT_URL")
+}
+
+model User {
+  ID           String    @id @default(uuid())
+  username     String
+  email        String    @unique
+  phone        String?
+  password     String
+  profile_url  String?
+  role         Role      @default(USER)
+  refreshToken String?
+  Student      Student[]
+}
+
+model Student {
+  ID           String                    @id @default(uuid())
+  NISN         String                    @unique
+  NIK          String                    @unique
+  fullName     String
+  placeOfBirth String
+  dateOfBirth  DateTime
+  gender       Gender
+  address      String
+  phone        String
+  major        Major
+  dateIn       DateTime?                 @default(now())
+  picture_url  String?
+  religion     Religion?
+  status       AcademyStatus             @default(ACTIVE)
+  createdAt    DateTime                  @default(now())
+  orphanStatus OrphanStatus              @default(NONE)
+  Brothers     Int?
+  blood_type   BloodType?
+  child_number Int?
+  citizenship  String?
+  from_school  String                    @default("")
+  fatherID     String?
+  motherID     String?
+  age          Int
+  documentID   String?                   @unique
+  userID       String?
+  announcement Announcement?
+  notification Notification[]
+  registration RegistrationTransaction[]
+  result       Result?
+  document     Document?                 @relation(fields: [documentID], references: [ID])
+  father       Father?                   @relation(fields: [fatherID], references: [ID])
+  mother       Mother?                   @relation(fields: [motherID], references: [ID])
+  user         User?                     @relation(fields: [userID], references: [ID])
+}
+
+model Father {
+  ID           String        @id @default(uuid())
+  name         String
+  job          String?
+  phone        String?
+  address      String?
+  status       ParentStatus?
+  citizenship  String?
+  dateOfBirth  DateTime
+  education    String
+  placeOfBirth String
+  religion     Religion?
+  title        String
+  student      Student[]
+}
+
+model Mother {
+  ID           String        @id @default(uuid())
+  name         String
+  job          String?
+  phone        String?
+  address      String?
+  status       ParentStatus?
+  citizenship  String?
+  dateOfBirth  DateTime
+  education    String
+  placeOfBirth String
+  religion     Religion?
+  title        String
+  student      Student[]
+}
+
+model RegistrationTransaction {
+  ID               String             @id @default(uuid())
+  registrationDate DateTime           @default(now())
+  amountPaid       Float
+  paymentMethod    String
+  status           RegistrationStatus @default(PENDING)
+  notes            String?
+  studentID        String
+  student          Student            @relation(fields: [studentID], references: [ID])
+}
+
+model Result {
+  ID        String   @id @default(uuid())
+  math      Int?
+  english   Int?
+  islamic   Int?
+  logic     Int?
+  average   Float?
+  isPassed  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  studentID String   @unique
+  student   Student  @relation(fields: [studentID], references: [ID])
+}
+
+model Announcement {
+  ID               String           @id @default(uuid())
+  title            String
+  message          String
+  status           GraduationStatus @default(PENDING)
+  announcementDate DateTime         @default(now())
+  studentID        String           @unique
+  student          Student          @relation(fields: [studentID], references: [ID])
+}
+
+model Notification {
+  ID        String             @id @default(uuid())
+  title     String
+  content   String
+  createdAt DateTime           @default(now())
+  is_read   Boolean            @default(false)
+  status    StatusNotification
+  studentID String
+  student   Student            @relation(fields: [studentID], references: [ID])
+}
+
+model Document {
+  ID                 String   @id @default(uuid())
+  fatherKTP_url      String?
+  motherKTP_url      String?
+  familyCard_url     String?
+  Akte_url           String?
+  Ijazah_url         String?
+  studentPicture_url String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  student            Student?
+}
+
+model clientSurvey {
+  ID        String   @id @default(uuid())
+  name      String?
+  Major     Major
+  message   String?
+  photoUrl  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum Gender {
@@ -62,128 +205,10 @@ enum Role {
   ADMIN
 }
 
-model User {
-  ID           String    @id @default(uuid())
-  username     String
-  email        String    @unique
-  password     String
-  profile_url  String?
-  role         Role      @default(USER)
-  refreshToken String?
-  Student      Student[]
-}
-
-model Student {
-  ID           String        @id @default(uuid())
-  NISN         String        @unique
-  NIK          String        @unique
-  fullName     String
-  placeOfBirth String
-  dateOfBirth  DateTime
-  gender       Gender
-  address      String
-  phone        String
-  major        Major
-  dateIn       DateTime?     @default(now())
-  picture_url  String?
-  religion     Religion?
-  status       AcademyStatus @default(ACTIVE)
-  createdAt    DateTime      @default(now())
-  orphanStatus OrphanStatus  @default(NONE)
-  child_number Int?
-  Brothers     Int?
-  from_school  String        @default("")
-  citizenship  String?
-  blood_type   BloodType?
-  age          Int
-
-  // relation 
-  announcement Announcement?
-
-  result       Result?
-  registration RegistrationTransaction[]
-  notification Notification[]
-  document     Document?                 @relation(fields: [documentID], references: [ID])
-  documentID   String?                   @unique
-  user         User?                     @relation(fields: [userID], references: [ID])
-  userID       String?
-
-  //  relation
-  mother   Mother? @relation(fields: [motherID], references: [ID])
-  motherID String?
-
-  father   Father? @relation(fields: [fatherID], references: [ID])
-  fatherID String?
-}
-
-model Father {
-  ID           String        @id @default(uuid())
-  name         String
-  job          String?
-  phone        String?
-  address      String?
-  religion     Religion?
-  placeOfBirth String
-  dateOfBirth  DateTime
-  status       ParentStatus?
-  education    String
-  title        String
-  citizenship  String?
-
-  // relation
-
-  student Student[]
-}
-
-model Mother {
-  ID           String        @id @default(uuid())
-  name         String
-  job          String?
-  phone        String?
-  address      String?
-  religion     Religion?
-  placeOfBirth String
-  dateOfBirth  DateTime
-  status       ParentStatus?
-  education    String
-  title        String
-  citizenship  String?
-
-  student Student[]
-}
-
 enum RegistrationStatus {
   PENDING
   VERIFIED
   REJECTED
-}
-
-model RegistrationTransaction {
-  ID               String             @id @default(uuid())
-  registrationDate DateTime           @default(now())
-  amountPaid       Float
-  paymentMethod    String
-  status           RegistrationStatus @default(PENDING)
-  notes            String?
-
-  // relation ke Student
-  student   Student @relation(fields: [studentID], references: [ID])
-  studentID String
-}
-
-model Result {
-  ID        String   @id @default(uuid())
-  math      Int?
-  english   Int?
-  islamic   Int?
-  logic     Int?
-  average   Float?
-  isPassed  Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  // relation
-  student   Student @relation(fields: [studentID], references: [ID])
-  studentID String  @unique
 }
 
 enum GraduationStatus {
@@ -192,32 +217,6 @@ enum GraduationStatus {
   PENDING
 }
 
-model Announcement {
-  ID               String           @id @default(uuid())
-  title            String
-  message          String
-  status           GraduationStatus @default(PENDING)
-  announcementDate DateTime         @default(now())
-
-  // relasi ke Student
-  student   Student @relation(fields: [studentID], references: [ID])
-  studentID String  @unique
-}
-
-// model Parent {
-//   ID            String        @id @default(uuid())
-//   father_name   String?
-//   mother_name   String?
-//   father_job    String?
-//   mother_job    String?
-//   phone         String?
-//   address       String?
-//   father_status ParentStatus?
-//   mother_status ParentStatus?
-
-//   student Student[]
-// }
-
 enum StatusNotification {
   REJECTED
   ACCEPTED
@@ -225,42 +224,4 @@ enum StatusNotification {
   VERIFIED
   UNVERIFIED
   INFORMATION
-}
-
-model Notification {
-  ID        String             @id @default(uuid())
-  title     String
-  content   String
-  createdAt DateTime           @default(now())
-  is_read   Boolean            @default(false)
-  status    StatusNotification
-
-  // relation
-  student   Student @relation(fields: [studentID], references: [ID])
-  studentID String
-}
-
-model Document {
-  ID                 String   @id @default(uuid())
-  fatherKTP_url      String?
-  motherKTP_url      String?
-  familyCard_url     String?
-  Akte_url           String?
-  Ijazah_url         String?
-  studentPicture_url String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-
-  // relation 
-  student Student?
-}
-
-model clientSurvey {
-  ID        String   @id @default(uuid())
-  name      String?
-  Major     Major
-  message   String?
-  photoUrl  String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
 }
