@@ -99,7 +99,9 @@ export class AuthService {
         message: 'success login',
         status: 200,
         data: {
-          id: user.ID,
+          ID: user.ID,
+          username: user.username,
+          password: user.password,
           email: user.email,
           phone: user.phone,
           role: user.role,
