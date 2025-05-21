@@ -74,8 +74,6 @@ model User {
   Student      Student[]
 }
 
-
-
 model Student {
   ID           String        @id @default(uuid())
   NISN         String        @unique
@@ -95,6 +93,7 @@ model Student {
   orphanStatus OrphanStatus  @default(NONE)
   child_number Int?
   Brothers     Int?
+  TA           String?
   from_school  String        @default("")
   citizenship  String?
   blood_type   BloodType?
@@ -102,6 +101,9 @@ model Student {
 
   // relation 
   announcement Announcement?
+
+  studentTests   StudentTest[]
+  studentAnswers StudentAnswer[]
 
   result       Result?
   registration RegistrationTransaction[]
@@ -117,6 +119,81 @@ model Student {
 
   father   Father? @relation(fields: [fatherID], references: [ID])
   fatherID String?
+}
+
+model CategoryTest {
+  ID   String @id @default(uuid())
+  name String @unique
+
+  // tests  Test[]
+  Test Test[]
+}
+
+model Test {
+  ID         String       @id @default(uuid())
+  title      String
+  category   CategoryTest @relation(fields: [categoryID], references: [ID])
+  categoryID String
+
+  questions    Question[]
+  studentTests StudentTest[]
+}
+
+model Question {
+  ID     String @id @default(uuid())
+  text   String
+  test   Test   @relation(fields: [testID], references: [ID])
+  testID String
+
+  options QuestionOption[]
+
+  correct   QuestionOption? @relation("CorrectOption", fields: [correctID], references: [ID])
+  correctID String?         @unique
+
+  studentAnswers StudentAnswer[]
+}
+
+model QuestionOption {
+  ID            String          @id @default(uuid())
+  label         String // A, B, C, D, dst.
+  value         String // isi jawaban
+  question      Question        @relation(fields: [questionID], references: [ID])
+  questionID    String
+  correctFor    Question?       @relation("CorrectOption")
+  StudentAnswer StudentAnswer[]
+}
+
+model StudentTest {
+  ID        String  @id @default(uuid())
+  student   Student @relation(fields: [studentID], references: [ID])
+  studentID String
+
+  test   Test   @relation(fields: [testID], references: [ID])
+  testID String
+
+  startedAt  DateTime  @default(now())
+  finishedAt DateTime?
+
+  score Float?
+
+  studentAnswers StudentAnswer[]
+}
+
+model StudentAnswer {
+  ID        String  @id @default(uuid())
+  student   Student @relation(fields: [studentID], references: [ID])
+  studentID String
+
+  question   Question @relation(fields: [questionID], references: [ID])
+  questionID String
+
+  selectedOption   QuestionOption @relation(fields: [selectedOptionID], references: [ID])
+  selectedOptionID String
+
+  studentTest   StudentTest @relation(fields: [studentTestID], references: [ID])
+  studentTestID String
+
+  createdAt DateTime @default(now())
 }
 
 model Father {
@@ -161,6 +238,11 @@ enum RegistrationStatus {
   REJECTED
 }
 
+enum PaymentStatus {
+  SUCCESS
+  FAILED
+}
+
 model RegistrationTransaction {
   ID               String             @id @default(uuid())
   registrationDate DateTime           @default(now())
@@ -168,10 +250,13 @@ model RegistrationTransaction {
   paymentMethod    String
   status           RegistrationStatus @default(PENDING)
   notes            String?
-
+  reference        String             @unique
+  adminFee         Int
+  senderName       String
+  paymentStatus    PaymentStatus      @default(SUCCESS)
   // relation ke Student
-  student   Student @relation(fields: [studentID], references: [ID])
-  studentID String
+  student          Student            @relation(fields: [studentID], references: [ID])
+  studentID        String
 }
 
 model Result {
@@ -227,7 +312,7 @@ enum StatusNotification {
   PENDING
   VERIFIED
   UNVERIFIED
-  INFORMATION 
+  INFORMATION
 }
 
 model Notification {
@@ -243,16 +328,23 @@ model Notification {
   studentID String
 }
 
+enum DocStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model Document {
-  ID                 String   @id @default(uuid())
+  ID                 String    @id @default(uuid())
   fatherKTP_url      String?
   motherKTP_url      String?
   familyCard_url     String?
   Akte_url           String?
   Ijazah_url         String?
   studentPicture_url String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  status             DocStatus @default(PENDING)
 
   // relation 
   student Student?

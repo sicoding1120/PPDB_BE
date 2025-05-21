@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { DocumentService } from './document.service';
 import { get } from 'http';
 
@@ -19,6 +19,10 @@ export class DocumentController {
     @Get("/:id")
     async getDocumentByStudentID(@Param("id") id:string) {
 
-    }
+  }
+  @Put("/update/:id")
+  async updateStatusDoc(@Body() payload: any, @Param("id") id:string) {
+    return await this.ds.updateStatusDoc(payload, id);
+  }
     
 }

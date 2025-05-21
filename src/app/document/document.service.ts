@@ -26,7 +26,11 @@ export class DocumentService {
   }
 
   async getDocument() {
-    const documents = await this.p.document.findMany();
+    const documents = await this.p.document.findMany({
+      include: {
+        student:true
+      }
+    });
 
     return {
       message: 'success get document',
@@ -54,5 +58,37 @@ export class DocumentService {
       status: 200,
       data: document,
     };
+  }
+
+  async updateStatusDoc(payload:any, id:string) {
+    try {
+      const doc = await this.p.document.findFirst({
+        where: {
+          ID: id,
+        },
+      });
+      if (!doc) {
+        throw new HttpException('Document not found', 404);
+      } else {
+        await this.p.document.update({
+          where: {
+            ID: id,
+          },
+          data: {
+            status: payload.status,
+          },
+        });
+
+        return {
+          message: 'success update document',
+          status: 200,
+        };
+      }
+    } catch (e) {
+      if (e) {
+        console.log(e);
+        throw new HttpException('internal server error', 500);
+      }
+    }
   }
 }

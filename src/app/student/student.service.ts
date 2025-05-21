@@ -24,7 +24,7 @@ export class StudentService {
       include: {
         father: true,
         mother: true,
-        document: true
+        document: true,
       },
     });
 
@@ -67,6 +67,53 @@ export class StudentService {
     }
     const studentCount = await this.P.student.count();
 
+    const JSPS = await this.P.student.groupBy({
+      by: ['from_school'],
+      _count: { from_school: true },
+      orderBy: {
+        _count: {
+          from_school: 'desc',
+        },
+      },
+      take: 5,
+      where: {
+        from_school: {
+          not: '', // hindari sekolah kosong
+        },
+      },
+    });
+    let jsps: any;
+    jsps = JSPS.map((item) => ({
+      schoolName: item.from_school,
+      studentCount: item._count.from_school,
+    }));
+    const JSPM = await this.P.student.groupBy({
+      by: ['major'],
+      _count: { major: true },
+      orderBy: {
+        _count: { major: 'desc' },
+      },
+    });
+
+    let jspm: any;
+    jspm = JSPM.map((item) => ({
+      major: item.major,
+      studentCount: item._count.major,
+    }));
+    const JSPOS = await this.P.student.groupBy({
+      by: ['orphanStatus'],
+      _count: { orphanStatus: true },
+      orderBy: {
+        _count: { orphanStatus: 'desc' },
+      },
+    });
+
+    let jspos: any;
+    jspos = JSPOS.map((item) => ({
+      orphanStatus: item.orphanStatus,
+      studentCount: item._count.orphanStatus,
+    }));
+
     return {
       message: 'success',
       status: 200,
@@ -76,6 +123,9 @@ export class StudentService {
         studentFailed: 0,
         studentOut: 0,
         history: history,
+        JSPS: jsps,
+        JSPM: jspm,
+        JSPOS: jspos,
       },
     };
   }
