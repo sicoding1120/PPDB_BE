@@ -12,7 +12,7 @@ export class CreateFatherDto {
     | 'BUDDHIST'
     | 'OTHER'; // Sesuaikan enum
   placeOfBirth: string;
-  dateOfBirth: Date;
+  dateOfBirth: Date | string;
   status?: 'ALIVE' | 'DECEASED' | 'UNKNOWN'; // Sesuaikan enum ParentStatus
   education: string;
   title: string;

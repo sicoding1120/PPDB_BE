@@ -12,7 +12,7 @@ export class CreateMotherDto {
     | 'BUDDHIST'
     
   placeOfBirth: string;
-  dateOfBirth: Date;
+  dateOfBirth: Date | string;
   status?: 'ALIVE' | 'DEAD' 
   education: string;
   title: string;

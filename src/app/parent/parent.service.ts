@@ -71,7 +71,7 @@ export class ParentService {
     }
   }
 
-  async createFather(payload: CreateFatherDto) {
+  async createFather(payload: CreateFatherDto | any) {
     try {
       await this.p.father.create({
         data: payload,
@@ -93,7 +93,7 @@ export class ParentService {
     }
   }
 
-  async createMother(payload: CreateMotherDto) {
+  async createMother(payload: CreateMotherDto | any) {
     try {
       await this.p.mother.create({
         data: payload,
