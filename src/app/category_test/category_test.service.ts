@@ -48,6 +48,24 @@ export class CategoryTestService {
     };
   }
 
+  async getDetailCategoryTest(id: string) {
+    const category = await this.p.categoryTest.findFirst({
+      where: {
+        ID: id,
+      },
+    });
+
+    if (!category) {
+      throw new HttpException('category test not found', 404);
+    }
+
+    return {
+      message: 'success get detail category test',
+      status: 200,
+      data: category,
+    };
+  }
+
   async deleteCategoryTestByID(id: string) {
     try {
       const category = await this.p.categoryTest.findFirst({
@@ -77,27 +95,27 @@ export class CategoryTestService {
   }
 
   async updateCategoryTest(payload: any, id: string) {
-      try {
-        const categoryTest = await this.p.categoryTest.findFirst({
+    try {
+      const categoryTest = await this.p.categoryTest.findFirst({
+        where: {
+          ID: id,
+        },
+      });
+
+      if (!categoryTest) {
+        throw new HttpException("category test doesn't exist", 422);
+      } else {
+        await this.p.categoryTest.update({
           where: {
             ID: id,
           },
+          data: payload,
         });
-
-        if (!categoryTest) {
-          throw new HttpException("category test doesn't exist", 422);
-        } else {
-          await this.p.categoryTest.update({
-            where: {
-              ID: id,
-            },
-            data: payload,
-          });
-          return {
-            message: 'success update category test',
-            status: 201,
-          };
-        }
+        return {
+          message: 'success update category test',
+          status: 201,
+        };
+      }
     } catch (e) {
       if (e) {
         console.log(e);

@@ -7,7 +7,7 @@ export class DocumentService {
 
   async savefile(payload: any) {
     // Save the file to the database
-    await this.p.document.create({
+    const doc = await this.p.document.create({
       data: {
         Akte_url: payload.akte_url,
         familyCard_url: payload.familyCard_url,
@@ -21,15 +21,15 @@ export class DocumentService {
     return {
       message: 'success save document',
       status: 201,
-      data: payload,
+      data: doc,
     };
   }
 
   async getDocument() {
     const documents = await this.p.document.findMany({
       include: {
-        student:true
-      }
+        student: true,
+      },
     });
 
     return {
@@ -60,7 +60,7 @@ export class DocumentService {
     };
   }
 
-  async updateStatusDoc(payload:any, id:string) {
+  async updateStatusDoc(payload: any, id: string) {
     try {
       const doc = await this.p.document.findFirst({
         where: {

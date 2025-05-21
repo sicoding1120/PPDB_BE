@@ -22,6 +22,10 @@ export class CategoryTestController {
   async getAllCategoryTest() {
     return await this.cts.getAllCategoryTest();
   }
+  @Get('/:id')
+  async getDetailCategoryTest(@Param('id') id: string) {
+    return await this.cts.getDetailCategoryTest(id)
+  }
   @Delete('/delete/:id')
   async deleteCategoryTestByID(@Param('id') id: string) {
     return await this.cts.deleteCategoryTestByID(id);

@@ -259,4 +259,32 @@ export class StudentService {
       data: student,
     };
   }
+
+  async updateRelationDocument(payload: any, id: string) {
+    const student = await this.P.student.findFirst({
+      where: {
+        ID: id,
+      },
+    });
+
+    if (!student) {
+      throw new HttpException('Student not found', 404);
+    } else {
+      await this.P.student.update({
+        where: {
+          ID: id,
+        },
+        data: {
+          documentID: payload.documentID,
+        }
+      })
+
+      return {
+        message: "success update relation document",
+        status: 201,
+      }
+    }
+      
+    
+  }
 }
