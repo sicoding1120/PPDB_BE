@@ -1,9 +1,40 @@
 untuk yang document + student itu api nya di url berikut
 
+method PUT
+
 "/update/doc/${id}"
 
 lalu payload yang di butuhkan: 
 
 {
     "documentID" : // idnya
+}
+
+Method POST
+
+untuk payload document nya
+
+{
+  "Akte_url": "https://dsajfe.com.sdajda/dfhrse.pdf",
+  "familyCard_url": "https://dsajfe.com.sdajda/dfhrse.pdf",
+  "fatherKTP_url": "https://dsajfe.com.sdajda/dfhrse.pdf",
+  "motherKTP_url": "https://dsajfe.com.sdajda/dfhrse.pdf",
+  "Ijazah_url": "https://dsajfe.com.sdajda/dfhrse.pdf",
+  "studentPicture_url": "https://dsajfe.com.sdajda/dfhrse.pdf"
+}
+
+
+ini model dari response
+
+{
+	"message": "success save document",
+	"status": 201,
+	"data": {
+		"Akte_url": "https://dsajfe.com.sdajda/dfhrse.pdf",
+		"familyCard_url": "https://dsajfe.com.sdajda/dfhrse.pdf",
+		"fatherKTP_url": "https://dsajfe.com.sdajda/dfhrse.pdf",
+		"motherKTP_url": "https://dsajfe.com.sdajda/dfhrse.pdf",
+		"Ijazah_url": "https://dsajfe.com.sdajda/dfhrse.pdf",
+		"studentPicture_url": "https://dsajfe.com.sdajda/dfhrse.pdf"
+	}
 }
