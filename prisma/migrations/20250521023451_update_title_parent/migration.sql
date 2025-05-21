@@ -1,0 +1,6 @@
+-- AlterTable
+ALTER TABLE "Father" ALTER COLUMN "education" DROP NOT NULL,
+ALTER COLUMN "title" DROP NOT NULL;
+
+-- AlterTable
+ALTER TABLE "Mother" ALTER COLUMN "title" DROP NOT NULL;

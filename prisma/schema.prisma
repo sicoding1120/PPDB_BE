@@ -226,7 +226,7 @@ model Mother {
   dateOfBirth  DateTime
   status       ParentStatus?
   education    String
-  title        String
+  title        String?
   citizenship  String?
 
   student Student[]
