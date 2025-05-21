@@ -4,6 +4,8 @@ method PUT
 
 "/update/doc/${id}"
 
+id = studentID dari sharedPreverent
+
 lalu payload yang di butuhkan: 
 
 {
@@ -11,6 +13,8 @@ lalu payload yang di butuhkan:
 }
 
 Method POST
+
+url = "/document/save"
 
 untuk payload document nya
 
@@ -30,6 +34,7 @@ ini model dari response
 	"message": "success save document",
 	"status": 201,
 	"data": {
+		"ID": "ksbdliu37482ux-dsahfiwu42-saiduy234g"
 		"Akte_url": "https://dsajfe.com.sdajda/dfhrse.pdf",
 		"familyCard_url": "https://dsajfe.com.sdajda/dfhrse.pdf",
 		"fatherKTP_url": "https://dsajfe.com.sdajda/dfhrse.pdf",
@@ -38,3 +43,5 @@ ini model dari response
 		"studentPicture_url": "https://dsajfe.com.sdajda/dfhrse.pdf"
 	}
 }
+
+ID nya di simpan ke shared preverent
