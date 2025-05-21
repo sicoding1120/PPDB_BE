@@ -1,1 +1,9 @@
-asm,fbjerire
+untuk yang document + student itu api nya di url berikut
+
+"/update/doc/${id}"
+
+lalu payload yang di butuhkan: 
+
+{
+    "documentID" : // idnya
+}

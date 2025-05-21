@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { StudentService } from './student.service';
 import { CreateStudentDto } from './student.dto';
 
@@ -37,5 +37,10 @@ export class StudentController {
   @Delete('/delete/:id')
   async deleteStudent(@Param('id') id: string) {
     return await this.ss.deleteStudentById(id);
+  }
+
+  @Put("/update/doc/:id")
+  async updateDoc(@Body() payload:any, @Param("id") id:string) {
+
   }
 }
