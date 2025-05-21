@@ -73,13 +73,13 @@ export class ParentService {
 
   async createFather(payload: CreateFatherDto | any) {
     try {
-      await this.p.father.create({
+      const father = await this.p.father.create({
         data: payload,
       } as never);
       return {
         message: 'success',
         status: 201,
-        data: payload,
+        data: father,
       };
     } catch (e) {
       if (e) {
@@ -95,13 +95,13 @@ export class ParentService {
 
   async createMother(payload: CreateMotherDto | any) {
     try {
-      await this.p.mother.create({
+      const mother = await this.p.mother.create({
         data: payload,
       });
       return {
         message: 'success',
         status: 201,
-        data: payload,
+        data: mother,
       };
     } catch (e) {
       if (e) {

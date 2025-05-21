@@ -130,7 +130,7 @@ export class StudentService {
     };
   }
 
-  async createStudent(payload: CreateStudentDto) {
+  async createStudent(payload: CreateStudentDto | any) {
     try {
       const student = await this.P.student.findUnique({
         where: {
