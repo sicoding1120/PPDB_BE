@@ -80,7 +80,7 @@ model Student {
   NIK          String        @unique
   fullName     String
   placeOfBirth String
-  dateOfBirth  DateTime
+  dateOfBirth  String
   gender       Gender
   address      String
   phone        String
@@ -204,7 +204,7 @@ model Father {
   address      String?
   religion     Religion?
   placeOfBirth String
-  dateOfBirth  DateTime
+  dateOfBirth  String
   status       ParentStatus?
   education    String?
   title        String?
@@ -223,7 +223,7 @@ model Mother {
   address      String?
   religion     Religion?
   placeOfBirth String
-  dateOfBirth  DateTime
+  dateOfBirth  String
   status       ParentStatus?
   education    String
   title        String?
