@@ -47,4 +47,62 @@ export class CategoryTestService {
       data: category,
     };
   }
+
+  async deleteCategoryTestByID(id: string) {
+    try {
+      const category = await this.p.categoryTest.findFirst({
+        where: {
+          ID: id,
+        },
+      });
+      if (!category) {
+        throw new HttpException('Category test not found', 404);
+      } else {
+        await this.p.categoryTest.delete({
+          where: {
+            ID: id,
+          },
+        });
+        return {
+          message: 'success delete category test',
+          status: 200,
+        };
+      }
+    } catch (e) {
+      if (e) {
+        console.log(e);
+        throw new HttpException('internal server error', 500);
+      }
+    }
+  }
+
+  async updateCategoryTest(payload: any, id: string) {
+      try {
+        const categoryTest = await this.p.categoryTest.findFirst({
+          where: {
+            ID: id,
+          },
+        });
+
+        if (!categoryTest) {
+          throw new HttpException("category test doesn't exist", 422);
+        } else {
+          await this.p.categoryTest.update({
+            where: {
+              ID: id,
+            },
+            data: payload,
+          });
+          return {
+            message: 'success update category test',
+            status: 201,
+          };
+        }
+    } catch (e) {
+      if (e) {
+        console.log(e);
+        throw new HttpException('internal server error', 500);
+      }
+    }
+  }
 }

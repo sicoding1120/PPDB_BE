@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { CategoryTestService } from './category_test.service';
 
 @Controller('category-test')
@@ -10,8 +18,17 @@ export class CategoryTestController {
     return await this.cts.createCategoryTest(payload);
   }
 
-  @Get("/")
+  @Get('/')
   async getAllCategoryTest() {
     return await this.cts.getAllCategoryTest();
+  }
+  @Delete('/delete/:id')
+  async deleteCategoryTestByID(@Param('id') id: string) {
+    return await this.cts.deleteCategoryTestByID(id);
+  }
+
+  @Put('/update/:id')
+  async updateCategoryTest(@Param('id') id: string, @Body() payload: any) {
+    return await this.cts.updateCategoryTest(payload, id);
   }
 }
