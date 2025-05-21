@@ -206,8 +206,8 @@ model Father {
   placeOfBirth String
   dateOfBirth  DateTime
   status       ParentStatus?
-  education    String
-  title        String
+  education    String?
+  title        String?
   citizenship  String?
 
   // relation
