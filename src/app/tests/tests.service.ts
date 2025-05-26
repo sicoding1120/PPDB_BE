@@ -1,4 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { truncate } from 'fs';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -36,11 +37,14 @@ export class TestService {
     }
   }
 
+
+
   async getAllTests() {
     const tests = await this.prisma.test.findMany({
       include: {
         category: true,
         questions: true,
+        studentTests : true
       },
     });
 
@@ -60,9 +64,15 @@ export class TestService {
         category: true,
         questions: {
           include: {
-            options: true,
+            options: {
+              orderBy: {
+                label: "asc"
+              }
+            },
+            correct: true,
           },
         },
+      studentTests:true
       },
     });
 
@@ -109,7 +119,7 @@ export class TestService {
       where: { ID: id },
       data: {
         title: payload.title,
-        categoryID: payload.categoryID,
+        // categoryID: payload.categoryID || test.categoryID,
       },
     });
 

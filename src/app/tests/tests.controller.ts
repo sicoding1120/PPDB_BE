@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
 } from '@nestjs/common';
@@ -23,12 +24,12 @@ export class TestController {
     return await this.testService.getAllTests();
   }
 
-  @Get(':id')
+  @Get('/detail/:id')
   async findOne(@Param('id') id: string) {
     return await this.testService.getTestDetail(id);
   }
 
-  @Put('/update/:id')
+  @Patch('/update/:id')
   async update(@Param('id') id: string, @Body() payload: any) {
     return await this.testService.updateTest(id, payload);
   }
@@ -37,4 +38,5 @@ export class TestController {
   async remove(@Param('id') id: string) {
     return await this.testService.deleteTest(id);
   }
+
 }
