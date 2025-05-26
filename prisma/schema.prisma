@@ -142,6 +142,7 @@ model Test {
 model Question {
   ID     String @id @default(uuid())
   text   String
+  weight Float  @default(1)
   test   Test   @relation(fields: [testID], references: [ID])
   testID String
 
@@ -172,7 +173,7 @@ model StudentTest {
   testID String
 
   startedAt  DateTime  @default(now())
-  finishedAt DateTime?
+  finishedAt String?
 
   score Float?
 
