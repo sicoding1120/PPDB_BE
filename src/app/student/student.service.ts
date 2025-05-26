@@ -38,6 +38,30 @@ export class StudentService {
     };
   }
 
+  async getStudentByUserID(userID: string) {
+    const student = await this.P.student.findFirst({
+      where: {
+        userID: userID,
+      },
+      include: {
+        father: true,
+        mother: true,
+        document: true,
+      }
+    });
+    if (!student) {
+      throw new HttpException('no data fetched', 404);
+    }
+
+    
+
+    return { 
+      message: 'success',
+      status: 200,
+      data: student,
+    }
+  }
+
   async studentOverview() {
     const today = new Date();
     const last5Days = subDays(today, 4);
@@ -276,15 +300,13 @@ export class StudentService {
         },
         data: {
           documentID: payload.documentID,
-        }
-      })
+        },
+      });
 
       return {
-        message: "success update relation document",
+        message: 'success update relation document',
         status: 201,
-      }
+      };
     }
-      
-    
   }
 }

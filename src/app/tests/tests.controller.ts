@@ -38,4 +38,5 @@ export class TestController {
   async remove(@Param('id') id: string) {
     return await this.testService.deleteTest(id);
   }
+
 }

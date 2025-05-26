@@ -119,7 +119,7 @@ export class TestService {
       where: { ID: id },
       data: {
         title: payload.title,
-        categoryID: payload.categoryID,
+        // categoryID: payload.categoryID || test.categoryID,
       },
     });
 

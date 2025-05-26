@@ -16,6 +16,11 @@ export class StudentController {
     return await this.ss.createStudent(payload);
   }
 
+  @Get("/user/:id")
+  async getStudentByUserID(@Param('id') id: string) {
+    return await this.ss.getStudentByUserID(id);
+  }
+
   @Get('/overview')
   async getDataOverview() {
     return await this.ss.studentOverview();

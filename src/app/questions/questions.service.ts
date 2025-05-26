@@ -119,6 +119,7 @@ export class QuestionsService {
   }
 
   async updateQuestion(id: string, payload: any) {
+    // Update question utama
     await this.p.question.update({
       where: { ID: id },
       data: {
@@ -128,6 +129,23 @@ export class QuestionsService {
       },
     });
 
+    // Update options satu per satu (jika ada)
+    if (payload.options && Array.isArray(payload.options)) {
+      for (const opt of payload.options) {
+        // Pastikan option punya ID untuk update
+        if (!opt.ID) continue;
+
+        await this.p.questionOption.update({
+          where: { ID: opt.ID },
+          data: {
+            label: opt.label,
+            value: opt.value,
+          },
+        });
+      }
+    }
+
+    // Update correctID jika ada correctLabel
     if (payload.correctLabel) {
       const options = await this.p.questionOption.findMany({
         where: { questionID: id },
@@ -136,6 +154,7 @@ export class QuestionsService {
       const correctOption = options.find(
         (opt) => opt.label === payload.correctLabel,
       );
+
       if (!correctOption) {
         throw new HttpException('Correct option label not found', 400);
       }
@@ -146,6 +165,7 @@ export class QuestionsService {
       });
     }
 
+    // Ambil data question terbaru
     const updated = await this.p.question.findUnique({
       where: { ID: id },
       include: { options: true, correct: true },
