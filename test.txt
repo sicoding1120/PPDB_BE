@@ -44,4 +44,4 @@ ini model dari response
 	}
 }
 
-ID nya di simpan ke shared preverent
+ID nya di simpan ke shared preverents
