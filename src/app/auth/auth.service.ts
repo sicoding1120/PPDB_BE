@@ -27,6 +27,34 @@ export class AuthService {
     });
   }
 
+  async registerAdmin(payload: any) {
+    try {
+      const user = await this.p.user.findFirst({
+        where: {
+          email: payload.email,
+          phone: payload.phone,
+        },
+      })
+      if (user) {
+        throw new HttpException('user already exist', 400);
+      }
+      payload.password = await hash(payload.password, 12);
+      await this.p.user.create({
+        data: payload,
+      });
+
+      return {
+        message: 'success register your account',
+        status: 201,
+        data: payload,
+      };
+    } catch (error) {
+      if (error) {
+        throw new HttpException('internal server error', 500);
+      }
+    }
+  }
+
   async Register(payload: any) {
     try {
       const user = await this.p.user.findUnique({
@@ -123,13 +151,13 @@ export class AuthService {
   async LoginAdmin(payload: any) {
     let user: any;
 
-    if (payload.email !== "" && payload.phone == "") {
+    if (payload.email !== "" || payload.phone == "") {
       user = await this.p.user.findFirst({
         where: {
           email: payload.email,
         },
       });
-    } else if (payload.email == "" && payload.phone !== "") {
+    } else if (payload.email == "" || payload.phone !== "") {
       user = await this.p.user.findFirst({
         where: {
           phone: payload.phone,
