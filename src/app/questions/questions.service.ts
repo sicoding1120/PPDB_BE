@@ -42,11 +42,10 @@ export class QuestionsService {
     };
   }
 
-  async createBulkQuestions(payload: any[]) {
-    return this.p.$transaction(async (tx) => {
-      const result = [];
-
-      for (const question of payload) {
+async createBulkQuestions(payload: any[]) {
+  return this.p.$transaction(async (tx) => {
+    const result = await Promise.all(
+      payload.map(async (question) => {
         const { text, weight, testID, correctValue, options } = question;
 
         // Step 1: Create question with options
@@ -84,12 +83,18 @@ export class QuestionsService {
           },
         });
 
-        result.push(updatedQuestion);
-      }
+        return updatedQuestion;
+      }),
+    );
 
-      return result;
-    });
+    return result;
+  },
+  {
+    timeout: 60000
   }
+
+);
+}
 
   async getAllQuestions() {
     const questions = await this.p.question.findMany({

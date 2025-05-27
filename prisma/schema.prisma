@@ -142,7 +142,7 @@ model Test {
 model Question {
   ID     String @id @default(uuid())
   text   String
-  weight Float  @default(1)
+  weight Int @default(1)
   test   Test   @relation(fields: [testID], references: [ID])
   testID String
 

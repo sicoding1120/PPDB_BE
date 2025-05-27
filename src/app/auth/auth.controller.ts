@@ -10,6 +10,11 @@ export class AuthController {
     return await this.as.Register(payload);
   }
 
+  @Post('/register/admin')
+  async registerAdmin(@Body() payload: any) {
+    return await this.as.registerAdmin(payload);
+  }
+
   @Post('/login')
   async Login(@Body() payload: any) {
     return await this.as.Login(payload);
