@@ -62,42 +62,61 @@ enum Role {
   ADMIN
 }
 
+enum UserStatus {
+  BANNED
+  ACTIVE
+}
+
+enum StudentStatus {
+  PENDING
+  PASSED
+  FAILED
+}
+
+enum TestType {
+  ONLINE
+  OFFLINE
+}
+
 model User {
-  ID           String    @id @default(uuid())
+  ID           String     @id @default(uuid())
   username     String
-  email        String    @unique
-  phone        String    @unique
+  email        String     @unique
+  phone        String     @unique
   password     String
+  status       UserStatus @default(ACTIVE)
   profile_url  String?
-  role         Role      @default(USER)
+  role         Role       @default(USER)
   refreshToken String?
   Student      Student[]
 }
 
 model Student {
-  ID           String        @id @default(uuid())
-  NISN         String        @unique
-  NIK          String        @unique
-  fullName     String
-  placeOfBirth String
-  dateOfBirth  String
-  gender       Gender
-  address      String
-  phone        String
-  major        Major
-  dateIn       DateTime?     @default(now())
-  picture_url  String?
-  religion     Religion?
-  status       AcademyStatus @default(ACTIVE)
-  createdAt    DateTime      @default(now())
-  orphanStatus OrphanStatus  @default(NONE)
-  child_number Int?
-  Brothers     Int?
-  TA           String?
-  from_school  String        @default("")
-  citizenship  String?
-  blood_type   BloodType?
-  age          Int
+  ID            String        @id @default(uuid())
+  NISN          String        @unique
+  NIK           String        @unique
+  fullName      String
+  placeOfBirth  String
+  dateOfBirth   String
+  gender        Gender
+  address       String
+  phone         String
+  major         Major
+  dateIn        DateTime?     @default(now())
+  picture_url   String?
+  religion      Religion?
+  AcademyStatus AcademyStatus @default(ACTIVE)
+  createdAt     DateTime      @default(now())
+  orphanStatus  OrphanStatus  @default(NONE)
+  child_number  Int?
+  Brothers      Int?
+  TA            String?
+  from_school   String        @default("")
+  citizenship   String?
+  blood_type    BloodType?
+  age           Int
+  status        StudentStatus @default(PENDING)
+  testType      TestType      @default(OFFLINE)
 
   // relation 
   announcement Announcement?
@@ -105,7 +124,6 @@ model Student {
   studentTests   StudentTest[]
   studentAnswers StudentAnswer[]
 
-  result       Result?
   registration RegistrationTransaction[]
   notification Notification[]
   document     Document?                 @relation(fields: [documentID], references: [ID])
@@ -142,7 +160,7 @@ model Test {
 model Question {
   ID     String @id @default(uuid())
   text   String
-  weight Int @default(1)
+  weight Int    @default(1)
   test   Test   @relation(fields: [testID], references: [ID])
   testID String
 
@@ -172,7 +190,7 @@ model StudentTest {
   test   Test   @relation(fields: [testID], references: [ID])
   testID String
 
-  startedAt  DateTime  @default(now())
+  startedAt  DateTime @default(now())
   finishedAt String?
 
   score Float?
@@ -258,21 +276,6 @@ model RegistrationTransaction {
   // relation ke Student
   student          Student            @relation(fields: [studentID], references: [ID])
   studentID        String
-}
-
-model Result {
-  ID        String   @id @default(uuid())
-  math      Int?
-  english   Int?
-  islamic   Int?
-  logic     Int?
-  average   Float?
-  isPassed  Boolean  @default(false)
-  createdAt DateTime @default(now())
-
-  // relation
-  student   Student @relation(fields: [studentID], references: [ID])
-  studentID String  @unique
 }
 
 enum GraduationStatus {
