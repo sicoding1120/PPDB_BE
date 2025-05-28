@@ -38,29 +38,53 @@ export class StudentService {
     };
   }
 
-  async getStudentByUserID(userID: string) {
-    const student = await this.P.student.findFirst({
-      where: {
-        userID: userID,
-      },
-      include: {
-        father: true,
-        mother: true,
-        document: true,
-      }
-    });
-    if (!student) {
-      throw new HttpException('no data fetched', 404);
-    }
+async getStudentByUserID(userID: string) {
+  const students = await this.P.student.findMany({
+    where: {
+      userID: userID,
+    },
+    include: {
+      father: true,
+      mother: true,
+      document: true,
+    },
+  });
 
-    
-
-    return { 
-      message: 'success',
-      status: 200,
-      data: student,
-    }
+  if (students.length === 0) {
+    throw new HttpException('no data fetched', 404);
   }
+
+  return {
+    message: 'success',
+    status: 200,
+    data: students, // Ini array of students
+  };
+}
+
+
+  async getStudentByFatherID(fatherID: string) {
+  const students = await this.P.student.findMany({
+    where: {
+      fatherID: fatherID,
+    },
+    include: {
+      father: true,
+      mother: true,
+      document: true,
+    },
+  });
+
+  if (!students || students.length === 0) {
+    throw new HttpException('No students found for this father ID', 404);
+  }
+
+  return {
+    message: 'success',
+    status: 200,
+    data: students,
+  };
+}
+
 
   async studentOverview() {
     const today = new Date();

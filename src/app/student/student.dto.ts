@@ -56,7 +56,7 @@ export class CreateStudentDto {
   dateIn?: Date;
   picture_url?: string;
   religion?: Religion;
-  status?: AcademyStatus; // Sesuaikan enum `AcademyStatus`
+  status?: String;
   orphanStatus?: OrphanStatus;
   child_number?: number;
   Brothers?: number;
@@ -65,4 +65,5 @@ export class CreateStudentDto {
   blood_type?: BloodType;
   motherID?: string;
   fatherID?: string;
+  academyStatus?: AcademyStatus;
 }

@@ -21,6 +21,11 @@ export class StudentController {
     return await this.ss.getStudentByUserID(id);
   }
 
+  @Get("/userFather/:id")
+async getStudentByFatherID(@Param('id') id: string) {
+  return await this.ss.getStudentByFatherID(id);
+}
+
   @Get('/overview')
   async getDataOverview() {
     return await this.ss.studentOverview();
