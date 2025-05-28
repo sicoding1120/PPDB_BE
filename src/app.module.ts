@@ -15,9 +15,10 @@ import { TestsModule } from './app/tests/tests.module';
 import { QuestionsModule } from './app/questions/questions.module';
 import { StudentTestsModule } from './app/student-tests/student-tests.module';
 import { StudentAnswerModule } from './app/student-answer/student-answer.module';
+import { AnnouncementModule } from './app/announcement/announcement.module';
 
 @Module({
-  imports: [AuthModule, PrismaModule, StudentModule, ParentModule, ResultModule, DocumentModule, ClientSurveyModule, PaymentModule, CategoryTestModule, TestsModule, QuestionsModule, StudentTestsModule, StudentAnswerModule],
+  imports: [AuthModule, PrismaModule, StudentModule, ParentModule, ResultModule, DocumentModule, ClientSurveyModule, PaymentModule, CategoryTestModule, TestsModule, QuestionsModule, StudentTestsModule, StudentAnswerModule, AnnouncementModule],
   controllers: [AppController],
   providers: [AppService,PrismaService],
 })

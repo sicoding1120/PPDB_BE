@@ -34,7 +34,7 @@ export class AuthService {
           email: payload.email,
           phone: payload.phone,
         },
-      })
+      });
       if (user) {
         throw new HttpException('user already exist', 400);
       }
@@ -84,13 +84,13 @@ export class AuthService {
 
   async Login(payload: any) {
     let user: any;
-    if (payload.email !== "" && payload.phone == "") {
+    if (payload.email !== '' && payload.phone == '') {
       user = await this.p.user.findFirst({
         where: {
           email: payload.email,
         },
       });
-    } else if (payload.email == "" && payload.phone !== "") {
+    } else if (payload.email == '' && payload.phone !== '') {
       user = await this.p.user.findFirst({
         where: {
           phone: payload.phone,
@@ -151,13 +151,13 @@ export class AuthService {
   async LoginAdmin(payload: any) {
     let user: any;
 
-    if (payload.email !== "" || payload.phone == "") {
+    if (payload.email !== '' || payload.phone == '') {
       user = await this.p.user.findFirst({
         where: {
           email: payload.email,
         },
       });
-    } else if (payload.email == "" || payload.phone !== "") {
+    } else if (payload.email == '' || payload.phone !== '') {
       user = await this.p.user.findFirst({
         where: {
           phone: payload.phone,
@@ -170,7 +170,7 @@ export class AuthService {
     }
 
     if (user.role !== 'ADMIN') {
-      throw new HttpException("you are not authorized as admin", 403);
+      throw new HttpException('you are not authorized as admin', 403);
     }
 
     const checkPassword = await compare(payload.password, user.password);
@@ -218,11 +218,90 @@ export class AuthService {
   }
 
   async getAllUser() {
-    const users = await this.p.user.findMany();
+    const users = await this.p.user.findMany({
+      where: {
+        role: {
+          not: 'ADMIN',
+        },
+      },
+      include: {
+        Student: true,
+      },
+    });
     return {
       message: 'success get all user',
       status: 200,
       data: users,
     };
+  }
+
+  async BannedUser(id: string) {
+    const user = await this.p.user.findFirst({
+      where: {
+        ID: id,
+      },
+    });
+    if (!user) {
+      throw new HttpException("user doesn't exist", 422);
+    } else {
+      await this.p.user.update({
+        where: {
+          ID: id,
+        },
+        data: {
+          status: 'BANNED',
+        },
+      });
+      return {
+        message: 'success banned user',
+        status: 200,
+      };
+    }
+  }
+  async ActiveUser(id: string) {
+    const user = await this.p.user.findFirst({
+      where: {
+        ID: id,
+      },
+    });
+    if (!user) {
+      throw new HttpException("user doesn't exist", 422);
+    } else {
+      await this.p.user.update({
+        where: {
+          ID: id,
+        },
+        data: {
+          status: 'ACTIVE',
+        },
+      });
+      return {
+        message: 'success activated user',
+        status: 200,
+      };
+    }
+  }
+
+  async deleteUser(id: string) {
+    const user = await this.p.user.findFirst({
+      where: {
+        ID: id,
+      },
+    });
+
+    if (!user) {
+      throw new HttpException("user doesn't exist", 422); 
+    }
+
+    await this.p.user.delete({
+      where: {
+        ID: id,
+      }
+    })
+
+    return {
+      message: 'success delete user',
+      status: 200,
+    }
   }
 }

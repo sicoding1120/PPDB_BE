@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 
 @Controller('auth')
@@ -28,5 +28,19 @@ export class AuthController {
   @Get('/users')
   async getUSers() {
     return await this.as.getAllUser();
+  }
+
+  @Patch("/users/status/:id")
+  async bannedUser(@Param('id') id: string) {
+    return await this.as.BannedUser(id);
+  }
+  @Patch("/users/status/active/:id")
+  async ActiveUser(@Param('id') id: string) {
+    return await this.as.ActiveUser(id);
+  }
+
+  @Delete("/users/delete/:id")
+  async deleteUser(@Param('id') id: string) {
+    return await this.as.deleteUser(id);
   }
 }
