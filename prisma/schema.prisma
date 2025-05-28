@@ -193,6 +193,9 @@ model StudentTest {
   startedAt  DateTime @default(now())
   finishedAt String?
 
+  announcement   Announcement? @relation(fields: [announcementID], references: [ID])
+  announcementID String?
+
   score Float?
 
   studentAnswers StudentAnswer[]
@@ -284,31 +287,32 @@ enum GraduationStatus {
   PENDING
 }
 
+enum Grade {
+  A
+  B
+  C
+  D
+  E
+}
+
 model Announcement {
-  ID               String           @id @default(uuid())
-  title            String
-  message          String
-  status           GraduationStatus @default(PENDING)
-  announcementDate DateTime         @default(now())
+  ID          String           @id @default(uuid())
+  title       String
+  message     String
+  status      GraduationStatus @default(PENDING)
+  scoreAvg    Int?
+  grade       Grade?
+  isPublished Boolean?         @default(false)
+  publishAt   DateTime?
+
+  announcementDate DateTime @default(now())
 
   // relasi ke Student
+  studentTest StudentTest[]
+
   student   Student @relation(fields: [studentID], references: [ID])
   studentID String  @unique
 }
-
-// model Parent {
-//   ID            String        @id @default(uuid())
-//   father_name   String?
-//   mother_name   String?
-//   father_job    String?
-//   mother_job    String?
-//   phone         String?
-//   address       String?
-//   father_status ParentStatus?
-//   mother_status ParentStatus?
-
-//   student Student[]
-// }
 
 enum StatusNotification {
   REJECTED
